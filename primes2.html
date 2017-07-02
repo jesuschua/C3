@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Prime Chart</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="resources/d3.min.js"></script>
+    <script type="text/javascript" src="resources/c3.min.js"></script>
+    <link href="resources/c3.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h4>Scatter Plot of Prime Differences</h4>
+    <p>Test</p>
+    <div id="chart"></div>
+
+    <script>
+      // ID of the Google Spreadsheet
+      var spreadsheetID = "1tlZpiUSu5iFU8KdxSO5WKfbRkQgsyCyklxM_b838WVA";
+
+      // Make sure it is public or set to Anyone with link can view
+      var url1 = "https://spreadsheets.google.com/feeds/list/" + spreadsheetID + "/od6/public/values?alt=json";
+
+      // make JSON call to Google Data API
+      $.getJSON(url1, function(data) {
+        var arr_ordinal = []
+        var arr_primes = []
+        var arr_difference = ['Difference']
+
+        for (var j = 0; j < 300; j++){
+           arr_ordinal.push(data.feed.entry[j])
+           arr_primes.push(data.feed.entry[j].gsx$prime.$t)
+           arr_difference.push(data.feed.entry[j].gsx$difference.$t)
+
+        }
+        //console.log(data);
+        //console.log(arr_primes);
+        //console.log(arr_yearlabel);
+
+        var chart = c3.generate({
+            data: {
+                columns: [
+                  arr_difference
+                ],
+                type: 'scatter'
+            },
+             axis: {
+               x: {
+                 type: 'category',
+                 categories: arr_primes,
+                 tick: {
+                   culling: {
+                    max: 10 // the number of tick texts will be adjusted to less than this value
+                  }
+                // for normal axis, default on
+                // for category axis, default off
+                }
+               }
+             },
+            zoom: {
+                enabled: true
+            }
+        });
+      });
+
+    </script>
+  </body>
+</html>
